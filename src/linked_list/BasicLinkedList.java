@@ -1,5 +1,7 @@
 package linked_list;
 
+import java.nio.channels.IllegalSelectorException;
+
 public class BasicLinkedList<X> {
 	private Node first;
 	private Node last;
@@ -36,7 +38,7 @@ public class BasicLinkedList<X> {
 			currentNode = currentNode.nextNode;
 		}
 		
-		// currentNode 左
+		// currentNode 左 
 		Node newNode = new Node(item); // 要插入的 
 		Node nextNode = currentNode.nextNode; // 右
 		currentNode.setNextNode(newNode); // 插入
@@ -45,8 +47,25 @@ public class BasicLinkedList<X> {
 	}
 	
 	public X removeAt(int position) {
+		if(first==null)
+			throw new IllegalStateException("the linkedlist is empty");
 		
-		return null;
+		Node currentNode = first;
+		Node prevNode = first;
+		
+		// start at first 找到要刪掉的那個
+		for(int i = 1; i<position && currentNode!=null; i++) {
+			// 每次往前推一格
+			prevNode = currentNode;
+			currentNode = currentNode.nextNode;
+		}
+		
+		// 此時已經找到currentNode (要刪掉的那個)
+		X nodeItem = currentNode.getNodeItem(); 
+		// 其左接至其右
+		prevNode.setNextNode(currentNode.getNextNode());
+		nodeCount--;
+		return nodeItem;
 	}
 	
 	public X remove() { 
@@ -58,6 +77,55 @@ public class BasicLinkedList<X> {
 		nodeCount--;
 		
 		return nodeItem;
+	}
+	
+	public X get(int position) {
+		if(first==null)
+			throw new IllegalStateException("the linkedlist is empty");
+		
+		Node currentNode = first;
+		// loop through all from one
+		for(int i = 1; i<size() && currentNode!=null; i++) {
+			if(i==position)
+				return currentNode.getNodeItem();
+			// currentNode往前推
+			currentNode = currentNode.getNextNode();
+		}
+		
+		// return null if nothing found
+		return null;
+	}
+	
+	public int find(X item) {
+		if(first==null)
+			throw new IllegalStateException("the linkedlist is empty");
+		
+		Node currentNode = first;
+		for(int i = 1; i<size()&&currentNode!=null; i++) {
+			if(currentNode.getNodeItem().equals(item))
+				return i;
+			// Node往前推
+			currentNode = currentNode.getNextNode();
+		}
+		
+		return -1;
+	}
+	
+	// pretty print
+	public String toString() {
+		StringBuffer contents = new StringBuffer();
+		Node curNode = first;
+		
+		while(curNode!=null) {
+			contents.append(curNode.getNodeItem());
+			// 每次Node往前推一格
+			curNode = curNode.getNextNode();
+			// 還沒到盡頭，還有下一個
+			if(curNode!=null)
+				contents.append(",");
+		}
+		
+		return contents.toString();
 	}
 	
 	public int size() {
